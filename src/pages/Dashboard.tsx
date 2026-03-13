@@ -1,10 +1,11 @@
 // src/pages/Dashboard.tsx
-import { useDashboard } from '../hooks/useDashboard'
+import { useDashboard }  from '../hooks/useDashboard'
 import { useAuthContext } from '../context/AuthContext'
-import { StatCard }    from '../components/Dashboard/StatCard'
-import { TaskChart }   from '../components/Dashboard/TaskChart'
-import { DonutChart }  from '../components/Dashboard/DonutChart'
-import { ActivityFeed } from '../components/Dashboard/ActivityFeed'
+import { StatCard }      from '../components/Dashboard/StatCard'
+import { TaskChart }     from '../components/Dashboard/TaskChart'
+import { DonutChart }    from '../components/Dashboard/DonutChart'
+import { ActivityFeed }  from '../components/Dashboard/ActivityFeed'
+import { Link }          from 'react-router-dom'
 
 export function Dashboard() {
   const { stats, activity, distribution, recentFeed,
@@ -12,91 +13,122 @@ export function Dashboard() {
   const { signOut } = useAuthContext()
 
   if (loading) return (
-    <div style={{ display:'flex', justifyContent:'center',
-      alignItems:'center', height:'60vh' }}>
-      <p>⏳ Cargando dashboard...</p>
+    <div style={{ minHeight:'100vh', display:'flex', alignItems:'center',
+      justifyContent:'center',
+      background:'linear-gradient(135deg,#667eea 0%,#764ba2 100%)' }}>
+      <p style={{ color:'white', fontSize:'1.2rem' }}>⏳ Cargando dashboard...</p>
     </div>
   )
 
   return (
-    <div style={{ padding:'2rem', maxWidth:'1200px', margin:'0 auto' }}>
+    <div style={{ minHeight:'100vh',
+      background:'linear-gradient(135deg,#667eea 0%,#764ba2 100%)' }}>
 
-      {/* --- Header --- */}
-      <div style={{ display:'flex', justifyContent:'space-between',
-        alignItems:'center', marginBottom:'2rem' }}>
-        <div>
-          <h1 style={{ margin:0 }}>📊 Dashboard</h1>
+      {/* Navbar */}
+      <nav style={{ display:'flex', justifyContent:'space-between', alignItems:'center',
+        padding:'1rem 2rem', background:'rgba(255,255,255,0.1)',
+        backdropFilter:'blur(10px)', borderBottom:'1px solid rgba(255,255,255,0.2)' }}>
+        <span style={{ fontWeight:800, fontSize:'1.1rem', color:'white' }}>
+          📊 Dashboard
+        </span>
+        <div style={{ display:'flex', gap:'1rem', alignItems:'center' }}>
           {lastUpdated && (
-            <p style={{ margin:0, fontSize:'0.8rem', color:'#94a3b8' }}>
+            <span style={{ fontSize:'0.78rem', color:'rgba(255,255,255,0.7)' }}>
               Actualizado: {lastUpdated.toLocaleTimeString('es-CO')}
-              {' '}<span style={{ color:'#10b981' }}>● Realtime activo</span>
-            </p>
+              {' '}<span style={{ color:'#6ee7b7' }}>● Activo</span>
+            </span>
           )}
-        </div>
-        <div style={{ display:'flex', gap:'0.75rem' }}>
-          <button onClick={refresh}
-            style={{ padding:'0.5rem 1rem', borderRadius:'8px', cursor:'pointer',
-              border:'1px solid #e2e8f0', background:'white' }}>
+          <Link to='/' style={{ color:'white', fontWeight:600, textDecoration:'none',
+            fontSize:'0.9rem', background:'rgba(255,255,255,0.15)',
+            padding:'0.4rem 0.9rem', borderRadius:'8px',
+            border:'1px solid rgba(255,255,255,0.3)' }}>
+            📋 Mis Tareas
+          </Link>
+          <button onClick={refresh} style={{ background:'rgba(255,255,255,0.15)',
+            border:'1px solid rgba(255,255,255,0.3)', borderRadius:'8px',
+            padding:'0.4rem 0.9rem', cursor:'pointer', color:'white', fontSize:'0.9rem' }}>
             🔄 Actualizar
           </button>
-          <button onClick={signOut}
-            style={{ padding:'0.5rem 1rem', borderRadius:'8px', cursor:'pointer',
-              border:'1px solid #fca5a5', background:'#fef2f2', color:'#ef4444',
-              fontWeight:600 }}>
+          <button onClick={signOut} style={{ background:'rgba(239,68,68,0.2)',
+            border:'1px solid rgba(239,68,68,0.4)', borderRadius:'8px',
+            padding:'0.4rem 0.9rem', cursor:'pointer', color:'#fca5a5',
+            fontSize:'0.9rem', fontWeight:600 }}>
             🚪 Cerrar sesión
           </button>
         </div>
-      </div>
+      </nav>
 
-      {/* --- Fila de KPIs --- */}
-      {stats && (
-        <div style={{ display:'grid',
-          gridTemplateColumns:'repeat(auto-fit, minmax(180px, 1fr))',
-          gap:'1rem', marginBottom:'2rem' }}>
-          <StatCard titulo='Total'       valor={stats.total}
-            icono='📓' color='#1a56a0' subtitulo='Todas las tareas' />
-          <StatCard titulo='Completadas' valor={stats.completadas}
-            icono='✅' color='#10b981' subtitulo={`${stats.porcentaje}%`} />
-          <StatCard titulo='Pendientes'  valor={stats.pendientes}
-            icono='⏳' color='#f59e0b' subtitulo='Por completar' />
-          <StatCard titulo='Progreso'    valor={`${stats.porcentaje}%`}
-            icono='🏁' color='#8b5cf6' subtitulo='Completitud' />
-          <StatCard titulo='Hoy'         valor={stats.creadasHoy}
-            icono='🆕' color='#0f766e' subtitulo='Nuevas hoy' />
+      <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'2rem 1rem' }}>
+
+        {/* Título */}
+        <div style={{ textAlign:'center', marginBottom:'2rem' }}>
+          <h1 style={{ color:'white', fontSize:'2rem', fontWeight:800, margin:0 }}>
+            📊 Panel de control
+          </h1>
+          <p style={{ color:'rgba(255,255,255,0.7)', margin:'0.5rem 0 0', fontSize:'0.9rem' }}>
+            Resumen en tiempo real de tus tareas
+          </p>
         </div>
-      )}
 
-      {/* --- Barra de progreso animada --- */}
-      {stats && (
-        <div style={{ background:'white', borderRadius:'12px',
-          padding:'1.5rem', marginBottom:'2rem',
-          boxShadow:'0 2px 8px rgba(0,0,0,0.06)' }}>
-          <div style={{ display:'flex', justifyContent:'space-between',
-            marginBottom:'0.5rem' }}>
-            <span style={{ fontWeight:600 }}>Progreso global</span>
-            <span style={{ fontWeight:800, color:'#10b981' }}>
-              {stats.porcentaje}%
-            </span>
+        {/* KPIs */}
+        {stats && (
+          <div style={{ display:'grid',
+            gridTemplateColumns:'repeat(auto-fit, minmax(170px, 1fr))',
+            gap:'1rem', marginBottom:'1.5rem' }}>
+            <StatCard titulo='Total'       valor={stats.total}
+              icono='📓' color='#1a56a0' subtitulo='Todas las tareas' />
+            <StatCard titulo='Completadas' valor={stats.completadas}
+              icono='✅' color='#10b981' subtitulo={`${stats.porcentaje}%`} />
+            <StatCard titulo='Pendientes'  valor={stats.pendientes}
+              icono='⏳' color='#f59e0b' subtitulo='Por completar' />
+            <StatCard titulo='Progreso'    valor={`${stats.porcentaje}%`}
+              icono='🏁' color='#8b5cf6' subtitulo='Completitud' />
+            <StatCard titulo='Hoy'         valor={stats.creadasHoy}
+              icono='🆕' color='#0f766e' subtitulo='Nuevas hoy' />
           </div>
-          <div style={{ background:'#e2e8f0', borderRadius:'999px',
-            height:'12px', overflow:'hidden' }}>
-            <div style={{ width:`${stats.porcentaje}%`, height:'100%',
-              background:'linear-gradient(90deg,#10b981,#059669)',
-              borderRadius:'999px', transition:'width 0.8s ease'
-            }} />
+        )}
+
+        {/* Barra de progreso */}
+        {stats && (
+          <div style={{ background:'rgba(255,255,255,0.95)', borderRadius:'14px',
+            padding:'1.5rem', marginBottom:'1.5rem',
+            boxShadow:'0 4px 20px rgba(0,0,0,0.1)' }}>
+            <div style={{ display:'flex', justifyContent:'space-between',
+              marginBottom:'0.75rem' }}>
+              <span style={{ fontWeight:700, color:'#1e293b' }}>Progreso global</span>
+              <span style={{ fontWeight:800, color:'#6366f1', fontSize:'1.1rem' }}>
+                {stats.porcentaje}%
+              </span>
+            </div>
+            <div style={{ background:'#e2e8f0', borderRadius:'999px',
+              height:'14px', overflow:'hidden' }}>
+              <div style={{ width:`${stats.porcentaje}%`, height:'100%',
+                background:'linear-gradient(90deg,#6366f1,#764ba2)',
+                borderRadius:'999px', transition:'width 0.8s ease' }} />
+            </div>
+          </div>
+        )}
+
+        {/* Gráficas */}
+        <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr',
+          gap:'1.5rem', marginBottom:'1.5rem' }}>
+          <div style={{ background:'rgba(255,255,255,0.95)', borderRadius:'14px',
+            padding:'1rem', boxShadow:'0 4px 20px rgba(0,0,0,0.1)' }}>
+            <TaskChart data={activity} />
+          </div>
+          <div style={{ background:'rgba(255,255,255,0.95)', borderRadius:'14px',
+            padding:'1rem', boxShadow:'0 4px 20px rgba(0,0,0,0.1)' }}>
+            <DonutChart data={distribution} />
           </div>
         </div>
-      )}
 
-      {/* --- Gráficas --- */}
-      <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr',
-        gap:'1.5rem', marginBottom:'2rem' }}>
-        <TaskChart data={activity} />
-        <DonutChart data={distribution} />
+        {/* Actividad reciente */}
+        <div style={{ background:'rgba(255,255,255,0.95)', borderRadius:'14px',
+          padding:'1rem', boxShadow:'0 4px 20px rgba(0,0,0,0.1)' }}>
+          <ActivityFeed tareas={recentFeed} />
+        </div>
+
       </div>
-
-      {/* --- Feed de actividad --- */}
-      <ActivityFeed tareas={recentFeed} />
     </div>
   )
 }
